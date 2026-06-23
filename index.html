@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MUHAMMAD SHUJJAH ASAD — Automation &amp; Lead Generation Systems Builder</title>
+<meta name="description" content="I design automated lead generation and CRM systems that turn manual prospecting into a pipeline that runs itself — built with n8n, APIs, and data extraction." />
+
+<!-- Free Google Fonts: Space Grotesk (display), IBM Plex Sans (body), JetBrains Mono (labels) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#0B1220;          /* near-black navy: text + dark sections */
+    --ink-soft:#18203200;   /* placeholder, unused alpha */
+    --paper:#FBFBFD;        /* page background */
+    --surface:#FFFFFF;      /* cards */
+    --line:#E6E8EF;         /* hairline borders */
+    --muted:#5A6478;        /* secondary text */
+    --accent:#2C3CF0;       /* system / primary actions */
+    --accent-press:#1F2BC2;
+    --signal:#10D9A3;       /* live data signal — used sparingly */
+    --signal-dim:#10d9a31a;
+    --radius:14px;
+    --maxw:1120px;
+    --ease:cubic-bezier(.2,.7,.2,1);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .display{font-family:"Space Grotesk",sans-serif;letter-spacing:-.02em;line-height:1.05}
+  .mono{font-family:"JetBrains Mono",monospace;letter-spacing:.04em}
+
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.16em;
+    color:var(--accent);
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:.5rem;
+    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:15px;
+    padding:13px 22px;border-radius:10px;
+    border:1px solid transparent;cursor:pointer;
+    transition:transform .18s var(--ease),background .18s var(--ease),box-shadow .18s var(--ease);
+  }
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 8px 24px -10px rgba(44,60,240,.6)}
+  .btn-primary:hover{background:var(--accent-press);transform:translateY(-2px)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .btn-arrow{transition:transform .18s var(--ease)}
+  .btn:hover .btn-arrow{transform:translateX(3px)}
+
+  :focus-visible{outline:3px solid var(--signal);outline-offset:3px;border-radius:6px}
+
+  /* ---------- Nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:saturate(140%) blur(10px);
+    background:rgba(251,251,253,.78);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:"Space Grotesk";font-weight:700;font-size:17px}
+  .brand .dot{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--signal);
+    display:grid;place-items:center;font-family:"JetBrains Mono";font-weight:600;font-size:14px}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a.link{font-size:14.5px;color:var(--muted);font-weight:500;transition:color .15s}
+  .nav-links a.link:hover{color:var(--ink)}
+  .nav-cta{padding:9px 16px;font-size:14px}
+  .menu-toggle{display:none;background:none;border:1px solid var(--line);border-radius:9px;
+    width:42px;height:42px;cursor:pointer}
+  .menu-toggle span{display:block;width:18px;height:2px;background:var(--ink);margin:3px auto;border-radius:2px}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:72px 0 84px;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+  .hero h1{font-size:clamp(34px,5vw,56px);font-weight:700;margin:18px 0 18px}
+  .hero h1 em{font-style:normal;color:var(--accent);position:relative}
+  .role{
+    font-family:"JetBrains Mono";font-size:13.5px;color:var(--ink);
+    display:inline-flex;align-items:center;gap:9px;
+    padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);
+  }
+  .role .pulse{width:8px;height:8px;border-radius:50%;background:var(--signal);
+    box-shadow:0 0 0 0 var(--signal);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,217,163,.55)}70%{box-shadow:0 0 0 9px rgba(16,217,163,0)}100%{box-shadow:0 0 0 0 rgba(16,217,163,0)}}
+  .hero p.sub{font-size:18px;color:var(--muted);max-width:520px;margin-bottom:30px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+
+  .stats{display:flex;gap:34px;margin-top:42px;flex-wrap:wrap}
+  .stat .n{font-family:"Space Grotesk";font-weight:700;font-size:26px}
+  .stat .l{font-family:"JetBrains Mono";font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+  /* ---------- Hero workflow graph (signature) ---------- */
+  .graph-card{
+    background:var(--ink);border-radius:20px;padding:26px;position:relative;
+    box-shadow:0 40px 80px -40px rgba(11,18,32,.55);
+  }
+  .graph-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .graph-top .ttl{font-family:"JetBrains Mono";font-size:12px;color:#aeb6c9}
+  .graph-top .live{font-family:"JetBrains Mono";font-size:11px;color:var(--signal);display:flex;align-items:center;gap:7px}
+  .graph-top .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--signal);animation:pulse 2.4s infinite}
+  .graph svg{width:100%;height:auto}
+  .node-box{fill:#141C30;stroke:#27314c}
+  .node-label{font-family:"JetBrains Mono";font-size:11px;fill:#E7EAF2}
+  .node-sub{font-family:"JetBrains Mono";font-size:9px;fill:#7d869c}
+  .wire{stroke:#2b3550;stroke-width:2;fill:none}
+  .signal-dot{fill:var(--signal)}
+
+  /* ---------- Section scaffolding ---------- */
+  section{padding:96px 0}
+  .sec-head{max-width:680px;margin-bottom:48px}
+  .sec-head h2{font-size:clamp(28px,3.6vw,40px);font-weight:700;margin:14px 0 14px}
+  .sec-head p{color:var(--muted);font-size:17px}
+
+  /* ---------- About ---------- */
+  .about{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:start}
+  .about-grid p{color:var(--muted);font-size:17px;margin-bottom:18px}
+  .about-grid p strong{color:var(--ink);font-weight:600}
+  .about-list{display:grid;gap:16px}
+  .about-list .row{display:flex;gap:14px;padding:18px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+  .about-list .row .ic{width:36px;height:36px;flex:none;border-radius:9px;background:var(--signal-dim);
+    color:var(--accent);display:grid;place-items:center;font-family:"JetBrains Mono";font-weight:600}
+  .about-list .row .t{font-family:"Space Grotesk";font-weight:600;font-size:15.5px;margin-bottom:2px}
+  .about-list .row .d{font-size:14px;color:var(--muted);line-height:1.5}
+
+  /* ---------- Services ---------- */
+  .services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+  .svc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;
+    transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s var(--ease)}
+  .svc:hover{transform:translateY(-4px);box-shadow:0 24px 48px -28px rgba(11,18,32,.28);border-color:#d4d8e6}
+  .svc .num{font-family:"JetBrains Mono";font-size:12px;color:var(--accent);font-weight:600}
+  .svc h3{font-family:"Space Grotesk";font-size:20px;font-weight:600;margin:16px 0 10px}
+  .svc p{color:var(--muted);font-size:15px;margin-bottom:16px}
+  .svc ul{list-style:none;display:grid;gap:8px}
+  .svc li{font-size:13.5px;color:var(--ink);display:flex;gap:9px;font-family:"JetBrains Mono"}
+  .svc li::before{content:"→";color:var(--signal);font-weight:700}
+
+  /* ---------- Projects ---------- */
+  .projects{background:var(--ink);color:#fff}
+  .projects .sec-head h2{color:#fff}
+  .projects .sec-head p{color:#aeb6c9}
+  .projects .eyebrow{color:var(--signal)}
+  .case{
+    display:grid;grid-template-columns:.8fr 2fr;gap:36px;
+    padding:34px 0;border-top:1px solid #222c44;align-items:start;
+  }
+  .case:last-child{border-bottom:1px solid #222c44}
+  .case-id{font-family:"JetBrains Mono";font-size:13px;color:#7d869c}
+  .case-id .tag{display:inline-block;margin-top:14px;color:var(--signal);font-size:12px;
+    border:1px solid #2b3550;border-radius:999px;padding:5px 11px}
+  .case h3{font-family:"Space Grotesk";font-size:24px;font-weight:600;margin-bottom:22px}
+  .case-body{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .case-block .k{font-family:"JetBrains Mono";font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#7d869c;margin-bottom:7px}
+  .case-block p{color:#c7cdda;font-size:14.5px}
+  .case-outcome{grid-column:1 / -1;background:#101729;border:1px solid #222c44;border-radius:12px;
+    padding:18px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .case-outcome .metric{font-family:"Space Grotesk";font-weight:700;font-size:22px;color:var(--signal)}
+  .case-outcome .desc{font-size:14px;color:#c7cdda}
+
+  /* ---------- Skills ---------- */
+  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .skill-col h4{font-family:"Space Grotesk";font-size:15px;font-weight:600;margin-bottom:16px;
+    padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .skill-col h4 span{font-family:"JetBrains Mono";color:var(--accent);font-size:12px;margin-right:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{font-family:"JetBrains Mono";font-size:12.5px;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:8px 12px;transition:border-color .15s,color .15s}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ---------- Contact ---------- */
+  .contact{background:var(--surface);border-top:1px solid var(--line)}
+  .contact-card{
+    background:var(--ink);border-radius:22px;padding:clamp(34px,5vw,64px);color:#fff;
+    display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;
+    box-shadow:0 40px 80px -45px rgba(11,18,32,.55);
+  }
+  .contact-card h2{font-family:"Space Grotesk";font-size:clamp(26px,3.4vw,38px);font-weight:700;margin-bottom:14px}
+  .contact-card p{color:#aeb6c9;font-size:16px;max-width:420px}
+  .contact-methods{display:grid;gap:14px}
+  .cm{display:flex;align-items:center;gap:16px;background:#141C30;border:1px solid #27314c;
+    border-radius:12px;padding:16px 18px;transition:border-color .18s var(--ease),transform .18s var(--ease)}
+  .cm:hover{border-color:var(--signal);transform:translateX(4px)}
+  .cm .ic{width:42px;height:42px;flex:none;border-radius:10px;background:#0B1220;display:grid;place-items:center}
+  .cm .ic svg{width:20px;height:20px;stroke:var(--signal)}
+  .cm .k{font-family:"JetBrains Mono";font-size:11px;color:#7d869c;text-transform:uppercase;letter-spacing:.1em}
+  .cm .v{font-family:"Space Grotesk";font-size:15.5px;font-weight:500;color:#fff;word-break:break-all}
+
+  /* ---------- Footer ---------- */
+  footer{padding:38px 0;border-top:1px solid var(--line)}
+  .foot-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .foot-inner .brand{font-size:15px}
+  .foot-inner p{font-family:"JetBrains Mono";font-size:12.5px;color:var(--muted)}
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- Responsive ---------- */
+  @media(max-width:900px){
+    .hero-grid,.about-grid,.contact-card{grid-template-columns:1fr;gap:40px}
+    .services-grid,.skills-grid{grid-template-columns:1fr}
+    .case{grid-template-columns:1fr;gap:18px}
+    .nav-links{display:none}
+    .menu-toggle{display:block}
+    .nav-links.open{display:flex;position:absolute;top:68px;left:0;right:0;flex-direction:column;
+      align-items:flex-start;gap:18px;background:var(--paper);border-bottom:1px solid var(--line);padding:22px 24px}
+    .nav-links.open .nav-cta{width:100%;justify-content:center}
+    section{padding:72px 0}
+    .case-body{grid-template-columns:1fr}
+  }
+  @media(max-width:560px){
+    .stats{gap:22px}
+    .hero-cta .btn{flex:1;justify-content:center}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand"><span class="dot">MS</span> MUHAMMAD SHUJJAH ASAD</a>
+    <nav class="nav-links" id="navLinks">
+      <a class="link" href="#about">About</a>
+      <a class="link" href="#services">Services</a>
+      <a class="link" href="#work">Work</a>
+      <a class="link" href="#skills">Skills</a>
+      <a class="btn btn-primary nav-cta" href="#contact">Contact Me</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Automation · Lead Generation · CRM Systems</span>
+      <h1 class="display">Turn manual prospecting into a <em>pipeline that runs itself.</em></h1>
+      <span class="role mono"><span class="pulse"></span>Automation &amp; Lead Generation Systems Builder</span>
+      <p class="sub" style="margin-top:24px">I design and ship automated systems that find your ideal customers, qualify them, and push them straight into your CRM — so your team spends time closing, not chasing.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contact">Contact Me <span class="btn-arrow">→</span></a>
+        <a class="btn btn-ghost" href="#work">View Projects</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">1,000+</div><div class="l">Leads / month captured</div></div>
+        <div class="stat"><div class="n">35%</div><div class="l">Faster turnaround</div></div>
+        <div class="stat"><div class="n">20%</div><div class="l">Less manual work</div></div>
+      </div>
+    </div>
+
+    <!-- Signature: live workflow graph -->
+    <div class="graph-card">
+      <div class="graph-top">
+        <span class="ttl">lead-pipeline.workflow</span>
+        <span class="live">RUNNING</span>
+      </div>
+      <div class="graph">
+        <svg viewBox="0 0 420 300" role="img" aria-label="An automated lead pipeline: a data source feeds a scraper and enrichment step, which qualifies leads and syncs them to a CRM.">
+          <!-- wires -->
+          <path id="w1" class="wire" d="M110 60 C160 60 160 110 210 110"/>
+          <path id="w2" class="wire" d="M310 110 C360 110 360 160 310 200"/>
+          <path id="w3" class="wire" d="M210 200 C160 200 160 250 110 250"/>
+          <path class="wire" d="M210 110 C170 110 170 200 210 200" opacity=".5"/>
+
+          <!-- nodes -->
+          <g>
+            <rect class="node-box" x="14" y="36" width="96" height="48" rx="10"/>
+            <text class="node-label" x="62" y="58" text-anchor="middle">Lead Source</text>
+            <text class="node-sub" x="62" y="72" text-anchor="middle">maps · ads · web</text>
+          </g>
+          <g>
+            <rect class="node-box" x="210" y="86" width="100" height="48" rx="10"/>
+            <text class="node-label" x="260" y="108" text-anchor="middle">Scrape + Enrich</text>
+            <text class="node-sub" x="260" y="122" text-anchor="middle">n8n · APIs</text>
+          </g>
+          <g>
+            <rect class="node-box" x="210" y="176" width="100" height="48" rx="10"/>
+            <text class="node-label" x="260" y="198" text-anchor="middle">Qualify Lead</text>
+            <text class="node-sub" x="260" y="212" text-anchor="middle">score · filter</text>
+          </g>
+          <g>
+            <rect class="node-box" x="14" y="226" width="96" height="48" rx="10"/>
+            <text class="node-label" x="62" y="248" text-anchor="middle">CRM Synced</text>
+            <text class="node-sub" x="62" y="262" text-anchor="middle">+ notify team</text>
+          </g>
+
+          <!-- flowing signals -->
+          <circle class="signal-dot" r="4"><animateMotion dur="2.6s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1"><mpath href="#w1"/></animateMotion></circle>
+          <circle class="signal-dot" r="4"><animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite"><mpath href="#w2"/></animateMotion></circle>
+          <circle class="signal-dot" r="4"><animateMotion dur="2.6s" begin="1.8s" repeatCount="indefinite"><mpath href="#w3"/></animateMotion></circle>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" id="about">
+  <div class="wrap about-grid reveal">
+    <div>
+      <span class="eyebrow">About</span>
+      <h2 class="display" style="font-size:clamp(26px,3.4vw,36px);margin:14px 0 20px">Systems that grow your pipeline while you sleep.</h2>
+      <p>Most sales teams lose hours every week to repetitive work: hunting for prospects, copying data between tools, and chasing leads that were never a fit. I remove that friction.</p>
+      <p>I build <strong>end-to-end acquisition systems</strong> that pull in the right prospects, enrich and score them automatically, and route only qualified opportunities to your team — connected to the tools you already use.</p>
+      <p>The result is a measurable one: <strong>more qualified conversations, faster response times, and a sales engine that keeps running</strong> without anyone babysitting a spreadsheet.</p>
+    </div>
+    <div class="about-list">
+      <div class="row"><div class="ic">01</div><div><div class="t">Business outcomes first</div><div class="d">Every workflow is built around a number you care about — leads booked, hours saved, deals moved.</div></div></div>
+      <div class="row"><div class="ic">02</div><div><div class="t">Built on tools you own</div><div class="d">I connect to your existing CRM and stack — no rip-and-replace, no vendor lock-in.</div></div></div>
+      <div class="row"><div class="ic">03</div><div><div class="t">Hands-off by design</div><div class="d">Systems run on schedules and triggers, with alerts so you only step in when it matters.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Services</span>
+      <h2 class="display">What I build for your business</h2>
+      <p>Four systems that together replace the manual grind between "we need more leads" and "they're in the CRM."</p>
+    </div>
+    <div class="services-grid">
+      <div class="svc reveal">
+        <span class="num">01</span>
+        <h3>Lead Generation Automation</h3>
+        <p>A repeatable engine that finds your ideal customers and delivers a fresh list of qualified prospects on autopilot.</p>
+        <ul><li>targeted prospect sourcing</li><li>auto-enrichment + scoring</li><li>daily / weekly lead delivery</li></ul>
+      </div>
+      <div class="svc reveal">
+        <span class="num">02</span>
+        <h3>CRM &amp; Pipeline Automation</h3>
+        <p>Leads land in the right stage, get assigned, and trigger follow-ups — so nothing slips through the cracks.</p>
+        <ul><li>auto lead routing + assignment</li><li>follow-up &amp; nurture sequences</li><li>deal-stage syncing</li></ul>
+      </div>
+      <div class="svc reveal">
+        <span class="num">03</span>
+        <h3>Google Maps / Data Extraction</h3>
+        <p>Pull clean, structured business data — names, contacts, locations — at scale, ready to use for outreach.</p>
+        <ul><li>maps + directory scraping</li><li>deduped, validated records</li><li>export to sheets or CRM</li></ul>
+      </div>
+      <div class="svc reveal">
+        <span class="num">04</span>
+        <h3>Workflow Automation (n8n, APIs)</h3>
+        <p>Custom automations that connect your apps and remove manual handoffs across sales and operations.</p>
+        <ul><li>multi-app integrations</li><li>webhook + API pipelines</li><li>scheduled, self-running jobs</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="projects" id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Selected Work</span>
+      <h2 class="display">Case studies</h2>
+      <p>Real systems, framed by the problem they solved and the outcome they produced.</p>
+    </div>
+
+    <div class="case reveal">
+      <div class="case-id">CASE 01<div class="tag">Lead Sourcing</div></div>
+      <div>
+        <h3 class="display">Google Maps Lead Scraper System</h3>
+        <div class="case-body">
+          <div class="case-block"><div class="k">Problem</div><p>A sales team built prospect lists by hand from Google Maps — hours of copy-pasting business names, phone numbers, and addresses, with duplicates and stale entries.</p></div>
+          <div class="case-block"><div class="k">Solution</div><p>An n8n workflow that searches Maps by location and category, extracts and de-duplicates every result, validates contact details, and writes clean records straight to a shared sheet.</p></div>
+          <div class="case-outcome"><span class="metric">8 hrs → 15 min</span><span class="desc">Weekly list-building time, fully automated and ready for outreach.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case reveal">
+      <div class="case-id">CASE 02<div class="tag">Pipeline Ops</div></div>
+      <div>
+        <h3 class="display">Automated CRM Pipeline</h3>
+        <div class="case-body">
+          <div class="case-block"><div class="k">Problem</div><p>Inbound leads sat untouched for hours. Reps weren't assigned automatically and follow-ups depended on someone remembering to send them.</p></div>
+          <div class="case-block"><div class="k">Solution</div><p>A webhook pipeline that captures every new lead, scores and routes it to the right rep instantly, opens a deal at the correct stage, and fires a timed follow-up sequence.</p></div>
+          <div class="case-outcome"><span class="metric">35% faster</span><span class="desc">First-response time, with zero leads left unassigned.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="case reveal">
+      <div class="case-id">CASE 03<div class="tag">Data Extraction</div></div>
+      <div>
+        <h3 class="display">Business Data Extraction Workflow</h3>
+        <div class="case-body">
+          <div class="case-block"><div class="k">Problem</div><p>Market research relied on manually gathering company data from multiple sites — slow, inconsistent, and impossible to keep current.</p></div>
+          <div class="case-block"><div class="k">Solution</div><p>A scheduled extraction system that pulls structured data via APIs and scraping, normalizes it into one format, and refreshes the dataset automatically on a recurring run.</p></div>
+          <div class="case-outcome"><span class="metric">1,000+ / mo</span><span class="desc">Records collected and updated with no manual intervention.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Capabilities</span>
+      <h2 class="display">The stack behind the systems</h2>
+      <p>The tools and techniques I use to design, connect, and run reliable automation.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-col reveal">
+        <h4><span>//</span>Automation</h4>
+        <div class="chips">
+          <span class="chip">n8n automation</span>
+          <span class="chip">workflow design</span>
+          <span class="chip">webhook pipelines</span>
+          <span class="chip">scheduled jobs</span>
+          <span class="chip">error handling</span>
+        </div>
+      </div>
+      <div class="skill-col reveal">
+        <h4><span>//</span>Integration</h4>
+        <div class="chips">
+          <span class="chip">API integrations</span>
+          <span class="chip">CRM systems</span>
+          <span class="chip">Google Sheets</span>
+          <span class="chip">WhatsApp / email</span>
+          <span class="chip">data mapping</span>
+        </div>
+      </div>
+      <div class="skill-col reveal">
+        <h4><span>//</span>Data</h4>
+        <div class="chips">
+          <span class="chip">Google Maps extraction</span>
+          <span class="chip">data scraping</span>
+          <span class="chip">enrichment + scoring</span>
+          <span class="chip">deduplication</span>
+          <span class="chip">structured exports</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="contact-card reveal">
+      <div>
+        <span class="eyebrow" style="color:var(--signal)">Let's talk</span>
+        <h2 style="margin-top:14px">Got a process worth automating?</h2>
+        <p>Tell me where your team is losing time on leads and follow-up. I'll map out the system that fixes it — and what it would take to ship.</p>
+      </div>
+      <div class="contact-methods">
+        <a class="cm" href="mailto:raja.shujjah143@gmail.com">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+          <span><span class="k">Email</span><br><span class="v">raja.shujjah143@gmail.com</span></span>
+        </a>
+        <a class="cm" href="https://wa.me/+92 332 9058204" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z"/></svg></span>
+          <span><span class="k">WhatsApp</span><br><span class="v">wa.me/+92 332 9058204</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap foot-inner">
+    <a href="#top" class="brand"><span class="dot">MS</span> MUHAMMAD SHUJJAH ASAD</a>
+    <p>Automation &amp; Lead Generation Systems · Built to convert.</p>
+    <p id="year"></p>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const toggle = document.getElementById('menuToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => {
+    const open = links.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  links.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => { links.classList.remove('open'); toggle.setAttribute('aria-expanded', false); })
+  );
+
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Year
+  document.getElementById('year').textContent = '© ' + new Date().getFullYear();
+</script>
+</body>
+</html>
